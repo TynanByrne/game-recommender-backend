@@ -1,3 +1,10 @@
+export interface GamesResult {
+  count: number
+  next?: string
+  previous?: string
+  results: Array<GameItem>
+}
+
 export interface GameItem {
   id: number
   slug: string

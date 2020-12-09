@@ -1,13 +1,12 @@
 import { ApolloServer } from 'apollo-server'
+import resolvers from './graphql/resolvers'
+import typeDefs from './graphql/typedefs'
 
-const API_URL = 'https://api.rawg.io/api/'
-
-const server: any = new ApolloServer({
+const server = new ApolloServer({
   typeDefs,
   resolvers,
 })
 
-server.listen().then(({ url } )) => {
+void server.listen().then(( { url } ) => {
   console.log(`Server ready at ${url}`)
-}
-
+})
