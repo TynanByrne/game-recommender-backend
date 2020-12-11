@@ -88,13 +88,13 @@ const typeDefs = gql`
     name: String!
     released: String
     tba: Boolean!
-    background_image: String!
+    background_image: String
     rating: Float!
     rating_top: Float
     ratings: [Rating]
     reviews_text_count: Int
     added: Int
-    added_by_status: AddedByStatus!
+    added_by_status: AddedByStatus
     metacritic: Int
     playtime: Int
     suggestions_count: Int
@@ -103,7 +103,7 @@ const typeDefs = gql`
     reviews_count: Int!
     saturated_color: String!
     dominant_color: String!
-    platforms: [Platform!]
+    platforms: [Platform]
     parent_platforms: [ParentPlatform]
     genres: [Genre]
     stores: [Store]
@@ -121,6 +121,7 @@ const typeDefs = gql`
     hello: String!
     goodbye: String!
     games: GamesResult!
+    searchGames(searchTerm: String!): GamesResult!
   }  
 `
 
