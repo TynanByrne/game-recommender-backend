@@ -43,10 +43,13 @@ const typeDefs = gql`
     games_count: Int!
     image_background: String
   }
+  type ParentPlatformDetails {
+    id: ID
+    name: String
+    slug: String
+  }
   type ParentPlatform {
-    id: ID!
-    name: String!
-    slug: String!
+    platform: ParentPlatformDetails
   }
   type Requirements {
     minimum: String
@@ -54,27 +57,27 @@ const typeDefs = gql`
   }
   type PlatformDetail {
     id: ID!
-    name: String!
-    slug: String!
+    name: String
+    slug: String
     image: String
     year_end: String
     year_start: String
-    games_count: Int!
-    image_background: String!
+    games_count: Int
+    image_background: String
   }
   type Platform {
-    platform: PlatformDetail!
+    platform: PlatformDetail
     released_at: String
     requirements_en: Requirements
     requirements_ru: Requirements
   }
   type AddedByStatus {
-    yet: Int!
-    owned: Int!
-    beaten: Int!
-    toplay: Int!
-    dropped: Int!
-    playing: Int!
+    yet: Int
+    owned: Int
+    beaten: Int
+    toplay: Int
+    dropped: Int
+    playing: Int
   }
   type Rating {
     id: ID!
@@ -89,7 +92,7 @@ const typeDefs = gql`
     released: String
     tba: Boolean!
     background_image: String
-    rating: Float!
+    rating: Float
     rating_top: Float
     ratings: [Rating]
     reviews_text_count: Int
@@ -117,12 +120,18 @@ const typeDefs = gql`
     previous: String
     results: [GameItem!]
   }
+  type User {
+    username: String!
+    passwordHash: String!
+  }
   type Query {
     hello: String!
     goodbye: String!
     games: GamesResult!
     searchGames(searchTerm: String!): GamesResult!
-  }  
+    nextSet(url: String): GamesResult!
+    allUsers: [User]
+  }
 `
 
 export default typeDefs
