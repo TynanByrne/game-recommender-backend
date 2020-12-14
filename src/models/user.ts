@@ -1,4 +1,4 @@
-import { createSchema, Type, typedModel } from 'ts-mongoose'
+import { createSchema, ExtractDoc, ExtractProps, Type, typedModel } from 'ts-mongoose'
 import uniqueValidator from 'mongoose-unique-validator'
 
 const userSchema = createSchema({
@@ -14,6 +14,9 @@ const userSchema = createSchema({
 })
 
 userSchema.plugin(uniqueValidator)
+
+export type UserDoc = ExtractDoc<typeof userSchema>
+export type UserProps = ExtractProps<typeof userSchema>
 
 const User = typedModel('User', userSchema)
 

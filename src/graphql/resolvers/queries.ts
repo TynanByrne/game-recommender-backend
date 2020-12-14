@@ -1,7 +1,7 @@
-import { GamesResult, User as UserType } from "../../types"
+import { GamesResult } from "../../types"
 import axios from 'axios'
 import config from '../../config'
-import User, { IUser } from "../../models/user"
+import User, { UserDoc } from "../../models/user"
 
 const API_URL = 'https://api.rawg.io/api'
 const API_KEY = config.API_KEY
@@ -38,7 +38,7 @@ const queries = {
       return emptyResult
     }
   },
-  allUsers: async (): IUser[] => {
+  allUsers: async (): Promise<UserDoc[]> => {
     return User.find({})
   },
 }

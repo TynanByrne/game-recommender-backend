@@ -132,6 +132,12 @@ const typeDefs = gql`
     nextSet(url: String): GamesResult!
     allUsers: [User]
   }
+  type Mutation {
+    addUser(
+      username: String!
+      password: String!
+    ): User
+  }
 `
 
 export default typeDefs
