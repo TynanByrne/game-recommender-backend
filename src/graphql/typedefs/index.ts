@@ -135,6 +135,7 @@ const typeDefs = gql`
     searchGames(searchTerm: String!): GamesResult!
     nextSet(url: String): GamesResult!
     allUsers: [User]
+    me: User
   }
   type Mutation {
     addUser(
