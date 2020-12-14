@@ -123,6 +123,10 @@ const typeDefs = gql`
   type User {
     username: String!
     passwordHash: String!
+    id: ID!
+  }
+  type Token {
+    value: String!
   }
   type Query {
     hello: String!
@@ -137,6 +141,10 @@ const typeDefs = gql`
       username: String!
       password: String!
     ): User
+    login(
+      username: String!
+      password: String!
+    ): Token
   }
 `
 

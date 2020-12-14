@@ -5,7 +5,7 @@ import typeDefs from './graphql/typedefs'
 
 const MONGODB_URI = process.env.MONGODB_URI ? process.env.MONGODB_URI : ''
 
-interface Error {
+export interface Error {
   message: string
 }
 
