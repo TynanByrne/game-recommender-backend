@@ -11,6 +11,9 @@ export interface UserArgs {
   username: string
   password: string
 }
+export interface DeleteArgs {
+  success: string
+}
 
 const mutations = {
   addUser: async (_root: never, args: UserArgs): Promise<UserDoc> => {
@@ -45,6 +48,22 @@ const mutations = {
       id: user.id,
     }
     return { value: jwt.sign(userForToken, JWT_SECRET) }
+  },
+  deleteUser: async (_root: never, args: UserArgs): Promise<DeleteArgs> => {
+    const user = await User.findOne({ username: args.username })
+
+    const passwordCorrect = user === null
+      ? false
+      : await bcrypt.compare(args.password, user.passwordHash)
+    
+    if (!(user && passwordCorrect)) {
+      throw new UserInputError('Wrong credentials.')
+    }
+
+    await User.findByIdAndDelete(user._id)
+
+    return { success: `User ${args.username} was successfully deleted.`}
+
   }
 }
 

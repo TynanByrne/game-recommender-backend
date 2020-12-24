@@ -128,6 +128,9 @@ const typeDefs = gql`
   type Token {
     value: String!
   }
+  type DeleteMsg {
+    success: String!
+  }
   type Query {
     hello: String!
     goodbye: String!
@@ -146,6 +149,10 @@ const typeDefs = gql`
       username: String!
       password: String!
     ): Token
+    deleteUser(
+      username: String!
+      password: String!
+    ): DeleteMsg
   }
 `
 

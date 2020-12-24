@@ -48,7 +48,8 @@ const queries = {
   },
   me: (_root: never, _args: never, context: Context): UserDoc => {
     return context.currentUser
-  }
+  },
+  
 }
 
 export default queries
