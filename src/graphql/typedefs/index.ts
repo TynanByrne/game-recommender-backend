@@ -153,6 +153,11 @@ const typeDefs = gql`
       username: String!
       password: String!
     ): DeleteMsg
+    changePassword(
+      username: String!
+      password: String!
+      newPassword: String!
+    ): User
   }
 `
 
