@@ -1,5 +1,6 @@
 import { createSchema, ExtractDoc, ExtractProps, Type, typedModel } from 'ts-mongoose'
 import uniqueValidator from 'mongoose-unique-validator'
+import { Schema } from 'mongoose'
 
 const userSchema = createSchema({
   username: Type.string({
@@ -11,6 +12,10 @@ const userSchema = createSchema({
     required: true,
     minlength: 8
   }),
+  library: {
+    type: Schema.Types.ObjectId,
+    ref: 'Library'
+  }
 })
 
 userSchema.plugin(uniqueValidator)

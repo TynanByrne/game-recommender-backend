@@ -3,6 +3,7 @@ import * as bcrypt from 'bcrypt'
 import * as jwt from 'jsonwebtoken'
 import { UserInputError } from "apollo-server"
 import config from '../../config'
+import Library, { LibraryDoc } from "../../models/library"
 
 
 const JWT_SECRET = config.JWT_SECRET
@@ -19,9 +20,15 @@ export interface PasswordChangeArgs {
   password: string
   newPassword: string
 }
+enum GameCategory { 'wishlist', 'completed', 'playing', 'not started' }
+export interface AddGameArgs {
+  username: string
+  gameCategory: string
+
+}
 
 const validateUser = async (username: string, password: string): Promise<UserDoc> => {
-  const user = await User.findOne({ username })
+  const user = await User.findOne({ username }).populate('libraries')
 
   const passwordCorrect = user === null
     ? false
@@ -83,6 +90,9 @@ const mutations = {
 
     user.passwordHash = newPasswordHash
     return user.save()
+  },
+  addGame: async (_root: never, args: AddGameArgs): Promise<LibraryDoc> => {
+    const
   }
 }
 
