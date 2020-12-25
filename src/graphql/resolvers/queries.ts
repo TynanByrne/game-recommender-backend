@@ -1,7 +1,8 @@
-import { GamesResult } from "../../types"
+import { GamesResult, SingleGame } from "../../types"
 import axios from 'axios'
 import config from '../../config'
 import User, { UserDoc } from "../../models/user"
+import { ApolloError } from "apollo-server"
 
 const API_URL = 'https://api.rawg.io/api'
 const API_KEY = config.API_KEY
@@ -41,6 +42,17 @@ const queries = {
     } catch (error) {
       console.log(error)
       return emptyResult
+    }
+  },
+  singleGame: async (_root: never, { id }: { id: string }): Promise<SingleGame | ApolloError> => {
+    try {
+      const { data: game } = await axios.get<SingleGame>(
+        `${API_URL}/games/${id}?key=${API_KEY}`
+      )
+      return game
+    } catch (error) {
+      console.log(error)
+      throw new ApolloError(`Game with id ${id} could not be fetched.`)
     }
   },
   allUsers: async (): Promise<UserDoc[]> => {

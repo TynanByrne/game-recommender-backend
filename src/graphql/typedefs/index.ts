@@ -34,6 +34,7 @@ const typeDefs = gql`
   }
   type Store {
     id: ID!
+    url: String!
     store: StoreDetail
   }
   type Genre {
@@ -131,6 +132,36 @@ const typeDefs = gql`
   type DeleteMsg {
     success: String!
   }
+  type Developer {
+    id: ID!
+    name: String!
+  }
+  type ESRBRating {
+    id: ID!
+    name: String!
+    slug: String!
+  }
+  type SingleGame {
+    id: ID!
+    slug: String!
+    name: String!
+    description: String
+    metacritic: Int
+    released: String!
+    background_image: String!
+    background_image_additional: String
+    website: String
+    reddit_url: String
+    reddit_name: String
+    alternative_names: [String]
+    parent_platforms: [ParentPlatform]
+    stores: [Store]
+    developers: [Developer]
+    genres: [Genre]
+    tags: [Tag]
+    esrb_rating: ESRBRating
+    clip: Clip
+  }
   type Query {
     hello: String!
     goodbye: String!
@@ -139,6 +170,7 @@ const typeDefs = gql`
     nextSet(url: String): GamesResult!
     allUsers: [User]
     me: User
+    singleGame(id: Int!): SingleGame
   }
   type Mutation {
     addUser(

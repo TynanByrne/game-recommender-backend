@@ -35,6 +35,39 @@ export interface GameItem {
   short_screenshots: Array<ShortScreenshot>
 }
 
+export interface SingleGame {
+  id: number
+  slug: string
+  name: string
+  description: string
+  metacritic: number
+  released: string
+  background_image: string
+  background_image_additional: string
+  website: string
+  reddit_url: string
+  reddit_name: string
+  alternative_names: [string]
+  parent_platforms: [ParentPlatform]
+  stores: [Store]
+  developers: [Developer]
+  genres: [Genre]
+  tags: [Tag]
+  esrb_rating: ESRBRating
+  clip: Clip
+}
+
+interface Developer {
+  id: number
+  name: string
+}
+
+interface ESRBRating {
+  id: number
+  name: string
+  slug: string
+}
+
 interface Rating {
   id: number
   title: string
@@ -86,6 +119,7 @@ interface Genre {
 
 interface Store {
   id: number
+  name: string
   store: StoreDetail
 }
 
