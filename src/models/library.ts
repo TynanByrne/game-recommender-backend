@@ -1,19 +1,26 @@
-import { Schema } from 'mongoose'
 import { createSchema, ExtractDoc, ExtractProps, Type, typedModel } from 'ts-mongoose'
 import { GameSchema } from './game'
 
+
 export const librarySchema = createSchema({
   games: Type.object().of({
-    wishlist: Type.array().of(GameSchema),
-    completed: Type.array().of(GameSchema),
-    playing: Type.array().of(GameSchema),
-    notStarted: Type.array().of(GameSchema)
+    wishlist: Type.array().of(
+      Type.ref(Type.objectId()).to('Game', GameSchema)
+    ),
+    completed: Type.array().of(
+      Type.ref(Type.objectId()).to('Game', GameSchema)
+    ),
+    playing: Type.array().of(
+      Type.ref(Type.objectId()).to('Game', GameSchema)
+    ),
+    unfinished: Type.array().of(
+      Type.ref(Type.objectId()).to('Game', GameSchema)
+    ),
+    notStarted: Type.array().of(
+      Type.ref(Type.objectId()).to('Game', GameSchema)
+    ),
   }),
-  totalGames: Type.number(),
-  user: {
-    type: Schema.Types.ObjectId,
-    ref: 'User'
-  }
+  totalGames: Type.number({ default: 0, required: true }),
 })
 
 

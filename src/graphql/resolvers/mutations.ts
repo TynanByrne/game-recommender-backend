@@ -1,9 +1,10 @@
 import User, { UserDoc } from "../../models/user"
 import * as bcrypt from 'bcrypt'
 import * as jwt from 'jsonwebtoken'
-import { UserInputError } from "apollo-server"
+import { ApolloError, UserInputError } from "apollo-server"
 import config from '../../config'
 import Library, { LibraryDoc } from "../../models/library"
+import Game from "../../models/game"
 
 
 const JWT_SECRET = config.JWT_SECRET
@@ -20,15 +21,34 @@ export interface PasswordChangeArgs {
   password: string
   newPassword: string
 }
-enum GameCategory { 'wishlist', 'completed', 'playing', 'not started' }
+export interface DatabaseGame {
+  id: number
+  name: string
+  metacritic: number
+  released: string
+  background_image: string
+  tags: {
+    id: number
+    name: string
+  }
+  parent_platforms: [{
+    id: number
+    name: string
+  }]
+  genres: [{
+    id: number
+    name: string
+  }]
+}
+type GameCategory = 'wishlist' | 'completed' | 'playing' | 'not started'
 export interface AddGameArgs {
   username: string
-  gameCategory: string
-
+  gameCategory: GameCategory
+  game: DatabaseGame
 }
 
 const validateUser = async (username: string, password: string): Promise<UserDoc> => {
-  const user = await User.findOne({ username }).populate('libraries')
+  const user = await User.findOne({ username })
 
   const passwordCorrect = user === null
     ? false
@@ -92,8 +112,47 @@ const mutations = {
     return user.save()
   },
   addGame: async (_root: never, args: AddGameArgs): Promise<LibraryDoc> => {
-    const
-  }
+    const user = await User.findOne({ username: args.username })
+
+    if (!user) {
+      throw new UserInputError('Username could not be found.')
+    }
+    if (!user.library) {
+      const library = new Library({
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        user: user._id,
+        games: {
+          wishlist: [],
+          completed: [],
+          playing: [],
+          unfinished: [],
+          notStarted: [],
+        }
+      })
+      user.library = library
+      await user.save()
+      await library.save()
+    }
+
+    let game = await Game.findOne({ id: args.game.id })
+    if (!game) {
+      game = new Game(args.game)
+      await game.save()
+    }
+    const library = await Library.findById(user.library)
+    if (!library) {
+      throw new ApolloError('Library could not be found.')
+    }
+    if (args.gameCategory === 'wishlist' && library.games) {
+      library.games.wishlist = library.games.wishlist?.concat(game)
+      console.log("CONCAT!")
+      console.log(game)
+      console.log(library)
+    }
+    console.log(library)
+    library.totalGames = library.totalGames + 1
+    return library.save()
+  },
 }
 
 export default mutations

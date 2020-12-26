@@ -31,7 +31,7 @@ gameSchema.plugin(mongooseUniqueValidator)
 export const GameSchema = gameSchema
 
 export type GameDoc = ExtractDoc<typeof gameSchema>
-export type GamePros = ExtractProps<typeof gameSchema>
+export type GameProps = ExtractProps<typeof gameSchema>
 
 const Game = typedModel('Game', gameSchema)
 

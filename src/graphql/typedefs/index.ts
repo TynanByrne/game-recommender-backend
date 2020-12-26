@@ -13,6 +13,14 @@ const typeDefs = gql`
     games_count: Int
     image_background: String
   }
+  input TagInput {
+    id: ID!
+    name: String
+    slug: String
+    language: String
+    games_count: Int
+    image_background: String
+  }
   type ClipSizes {
     _320: String
     _640: String
@@ -38,6 +46,13 @@ const typeDefs = gql`
     store: StoreDetail
   }
   type Genre {
+    id: ID!
+    name: String
+    slug: String
+    games_count: Int!
+    image_background: String
+  }
+  input GenreInput {
     id: ID!
     name: String
     slug: String
@@ -162,6 +177,48 @@ const typeDefs = gql`
     esrb_rating: ESRBRating
     clip: Clip
   }
+  input GameInput {
+    id: ID!
+    name: String!
+    metacritic: Int
+    released: String!
+    background_image: String!
+    parent_platforms: [ParentPlatformInput]
+    genres: [GenreInput]
+    tags: [TagInput]
+  }
+  input PlatformDetailsInput {
+    id: ID!
+    name: String
+    slug: String
+  }
+  input ParentPlatformInput {
+    platform: PlatformDetailsInput
+  }
+  type DatabaseGame {
+    id: ID!
+    name: String!
+    metacritic: Int
+    released: String!
+    background_image: String!
+    parent_platforms: [ParentPlatform]
+    genres: [Genre]
+    tags: [Tag]
+  }
+  type GameObjectID {
+    _id: String!
+  }
+  type LibraryGames {
+    wishlist: [GameObjectID]
+    completed: [GameObjectID]
+    playing: [GameObjectID]
+    unfinished: [GameObjectID]
+    notStarted: [GameObjectID]
+  }
+  type Library {
+    games: LibraryGames!
+    totalGames: Int!
+  }
   type Query {
     hello: String!
     goodbye: String!
@@ -190,6 +247,11 @@ const typeDefs = gql`
       password: String!
       newPassword: String!
     ): User
+    addGame(
+      username: String!
+      gameCategory: String!
+      game: GameInput
+    ): Library
   }
 `
 
