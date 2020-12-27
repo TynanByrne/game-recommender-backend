@@ -216,7 +216,7 @@ const typeDefs = gql`
     notStarted: [GameObjectID]
   }
   type Library {
-    games: LibraryGames!
+    games: LibraryGames
     totalGames: Int!
   }
   type Query {

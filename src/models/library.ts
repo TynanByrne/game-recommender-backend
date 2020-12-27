@@ -4,19 +4,19 @@ import { GameSchema } from './game'
 
 export const librarySchema = createSchema({
   games: Type.object().of({
-    wishlist: Type.array().of(
+    wishlist: Type.array({ required: true }).of(
       Type.ref(Type.objectId()).to('Game', GameSchema)
     ),
-    completed: Type.array().of(
+    completed: Type.array({ required: true }).of(
       Type.ref(Type.objectId()).to('Game', GameSchema)
     ),
-    playing: Type.array().of(
+    playing: Type.array({ required: true }).of(
       Type.ref(Type.objectId()).to('Game', GameSchema)
     ),
-    unfinished: Type.array().of(
+    unfinished: Type.array({ required: true }).of(
       Type.ref(Type.objectId()).to('Game', GameSchema)
     ),
-    notStarted: Type.array().of(
+    notStarted: Type.array({ required: true }).of(
       Type.ref(Type.objectId()).to('Game', GameSchema)
     ),
   }),

@@ -40,7 +40,7 @@ export interface DatabaseGame {
     name: string
   }]
 }
-type GameCategory = 'wishlist' | 'completed' | 'playing' | 'not started'
+type GameCategory = 'wishlist' | 'completed' | 'playing' | 'not started' | 'unfinished'
 export interface AddGameArgs {
   username: string
   gameCategory: GameCategory
@@ -96,7 +96,8 @@ const mutations = {
   },
   deleteUser: async (_root: never, args: UserArgs): Promise<SuccessMsg> => {
     const user = await validateUser(args.username, args.password)
-
+    
+    await Library.findByIdAndDelete(user.library)
     await User.findByIdAndDelete(user._id)
 
     return { success: `User ${args.username} was successfully deleted.` }
@@ -144,14 +145,14 @@ const mutations = {
       throw new ApolloError('Library could not be found.')
     }
     if (args.gameCategory === 'wishlist' && library.games) {
-      library.games.wishlist = library.games.wishlist?.concat(game)
+      console.log(game._id)
+      library.games.wishlist = library.games.wishlist?.concat(game._id)
+      library.markModified('games')
       console.log("CONCAT!")
-      console.log(game)
-      console.log(library)
     }
-    console.log(library)
     library.totalGames = library.totalGames + 1
-    return library.save()
+    console.log(library)
+    return await library.save()
   },
 }
 
