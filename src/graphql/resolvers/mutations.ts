@@ -5,10 +5,17 @@ import { ApolloError, UserInputError } from "apollo-server"
 import config from '../../config'
 import Library, { LibraryDoc } from "../../models/library"
 import Game from "../../models/game"
+import Axios from "axios"
+import { SingleGame } from "../../types"
 
 
 const JWT_SECRET = config.JWT_SECRET
 if (JWT_SECRET === undefined) throw new Error('Could not find JWT_SECRET...')
+
+const API_URL = 'https://api.rawg.io/api'
+const API_KEY = config.API_KEY
+if (API_KEY === undefined) throw new Error('Could not find API_KEY')
+
 export interface UserArgs {
   username: string
   password: string
@@ -21,30 +28,11 @@ export interface PasswordChangeArgs {
   password: string
   newPassword: string
 }
-export interface DatabaseGame {
-  id: number
-  name: string
-  metacritic: number
-  released: string
-  background_image: string
-  tags: {
-    id: number
-    name: string
-  }
-  parent_platforms: [{
-    id: number
-    name: string
-  }]
-  genres: [{
-    id: number
-    name: string
-  }]
-}
 type GameCategory = 'wishlist' | 'completed' | 'playing' | 'not started' | 'unfinished'
 export interface AddGameArgs {
   username: string
   gameCategory: GameCategory
-  game: DatabaseGame
+  gameId: number
 }
 
 const validateUser = async (username: string, password: string): Promise<UserDoc> => {
@@ -96,7 +84,7 @@ const mutations = {
   },
   deleteUser: async (_root: never, args: UserArgs): Promise<SuccessMsg> => {
     const user = await validateUser(args.username, args.password)
-    
+
     await Library.findByIdAndDelete(user.library)
     await User.findByIdAndDelete(user._id)
 
@@ -135,23 +123,47 @@ const mutations = {
       await library.save()
     }
 
-    let game = await Game.findOne({ id: args.game.id })
+    let game = await Game.findOne({ id: args.gameId })
     if (!game) {
-      game = new Game(args.game)
-      await game.save()
+      try {
+        const { data } = await Axios.get<SingleGame>(
+          `${API_URL}/games/${args.gameId}?key=${API_KEY}`
+        )
+        game = new Game(data)
+        await game.save()
+      } catch (error) {
+        console.log(error)
+        throw new ApolloError(`Game with id ${args.gameId} could not be fetched.`)
+      }
     }
+    console.log(game)
     const library = await Library.findById(user.library)
     if (!library) {
       throw new ApolloError('Library could not be found.')
     }
-    if (args.gameCategory === 'wishlist' && library.games) {
-      console.log(game._id)
-      library.games.wishlist = library.games.wishlist?.concat(game._id)
+    if (library.games) {
+      switch (args.gameCategory) {
+        case 'wishlist':
+          library.games.wishlist = library.games.wishlist.concat(game._id)
+          break
+        case 'completed':
+          library.games.completed = library.games.completed.concat(game._id)
+          break
+        case 'not started':
+          library.games.notStarted = library.games.notStarted.concat(game._id)
+          break
+        case 'playing':
+          library.games.playing = library.games.playing.concat(game._id)
+          break
+        case 'unfinished':
+          library.games.unfinished = library.games.unfinished.concat(game._id)
+          break
+        default:
+          throw new ApolloError('Invalid game category.')
+      }
       library.markModified('games')
-      console.log("CONCAT!")
     }
     library.totalGames = library.totalGames + 1
-    console.log(library)
     return await library.save()
   },
 }

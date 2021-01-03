@@ -177,6 +177,14 @@ const typeDefs = gql`
     esrb_rating: ESRBRating
     clip: Clip
   }
+  input ParentPlatformInput {
+    platform: PlatformDetailsInput
+  }
+  input PlatformDetailsInput {
+    id: ID!
+    name: String
+    slug: String
+  }
   input GameInput {
     id: ID!
     name: String!
@@ -186,14 +194,6 @@ const typeDefs = gql`
     parent_platforms: [ParentPlatformInput]
     genres: [GenreInput]
     tags: [TagInput]
-  }
-  input PlatformDetailsInput {
-    id: ID!
-    name: String
-    slug: String
-  }
-  input ParentPlatformInput {
-    platform: PlatformDetailsInput
   }
   type DatabaseGame {
     id: ID!
@@ -250,7 +250,7 @@ const typeDefs = gql`
     addGame(
       username: String!
       gameCategory: String!
-      game: GameInput
+      gameId: Int!
     ): Library
   }
 `

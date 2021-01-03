@@ -107,7 +107,7 @@ interface Requirements {
   recommended: string
 }
 
-type ParentPlatform = Pick<PlatformDetail, 'id' | 'name' | 'slug'>
+export type ParentPlatform = Pick<PlatformDetail, 'id' | 'name' | 'slug'>
 
 interface Genre {
   id: number
