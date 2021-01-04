@@ -3,6 +3,7 @@ import axios from 'axios'
 import config from '../../config'
 import User, { UserDoc } from "../../models/user"
 import { ApolloError } from "apollo-server"
+import 'ts-mongoose/plugin'
 
 const API_URL = 'https://api.rawg.io/api'
 const API_KEY = config.API_KEY
@@ -61,7 +62,17 @@ const queries = {
   me: (_root: never, _args: never, context: Context): UserDoc => {
     return context.currentUser
   },
-  
+  myUserDoc: async (_root: never, { username }: { username: string }): Promise<UserDoc | undefined | ApolloError> => {
+    try {
+      const user = await User.findOne({ username })
+      if (user) {
+        return user
+      }
+      return undefined
+    } catch (error) {
+      throw new ApolloError(`User document for ${username} could not be fetched.`)
+    } 
+  },
 }
 
 export default queries

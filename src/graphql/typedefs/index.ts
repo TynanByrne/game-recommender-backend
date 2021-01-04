@@ -228,6 +228,7 @@ const typeDefs = gql`
     allUsers: [User]
     me: User
     singleGame(id: Int!): SingleGame
+    myLibrary(username: String!): Library
   }
   type Mutation {
     addUser(

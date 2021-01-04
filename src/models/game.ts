@@ -17,8 +17,10 @@ const gameSchema = createSchema({
     name: Type.string(),
   }),
   parent_platforms: Type.array().of({
-    id: Type.number(),
-    name: Type.string(),
+    platform: Type.array().of({
+      id: Type.number(),
+      name: Type.string(),
+    }),
   }),
   genres: Type.array().of({
     id: Type.number(),
