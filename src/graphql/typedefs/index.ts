@@ -140,6 +140,7 @@ const typeDefs = gql`
     username: String!
     passwordHash: String!
     id: ID!
+    library: String!
   }
   type Token {
     value: String!
@@ -228,7 +229,7 @@ const typeDefs = gql`
     allUsers: [User]
     me: User
     singleGame(id: Int!): SingleGame
-    myLibrary(username: String!): Library
+    myUserDoc(username: String!): User
   }
   type Mutation {
     addUser(
