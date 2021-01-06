@@ -2,7 +2,7 @@ import mongooseUniqueValidator from 'mongoose-unique-validator'
 import { createSchema, ExtractDoc, ExtractProps, Type, typedModel } from 'ts-mongoose'
 
 const gameSchema = createSchema({
-  id: Type.number({
+  numberId: Type.number({
     required: true,
     unique: true,
   }),

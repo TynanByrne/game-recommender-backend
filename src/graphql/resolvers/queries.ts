@@ -2,8 +2,11 @@ import { GamesResult, SingleGame } from "../../types"
 import axios from 'axios'
 import config from '../../config'
 import User, { UserDoc } from "../../models/user"
+import Library, { LibraryDoc } from '../../models/library'
 import { ApolloError } from "apollo-server"
 import 'ts-mongoose/plugin'
+import { mongo } from "mongoose"
+import Game, { GameDoc } from "../../models/game"
 
 const API_URL = 'https://api.rawg.io/api'
 const API_KEY = config.API_KEY
@@ -31,10 +34,10 @@ const queries = {
       console.log(error)
       return emptyResult
     }
-    
+
   },
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  searchGames: async (_root: never, { searchTerm }: { searchTerm: string} ): Promise<GamesResult> => {
+  searchGames: async (_root: never, { searchTerm }: { searchTerm: string }): Promise<GamesResult> => {
     try {
       const { data: games } = await axios.get<GamesResult>(
         `${API_URL}/games?key=${API_KEY}&search=${searchTerm}`
@@ -62,17 +65,38 @@ const queries = {
   me: (_root: never, _args: never, context: Context): UserDoc => {
     return context.currentUser
   },
-  myUserDoc: async (_root: never, { username }: { username: string }): Promise<UserDoc | undefined | ApolloError> => {
+  myLibrary: async (_root: never, { libraryId }: { libraryId: string }): Promise<LibraryDoc | null | ApolloError> => {
     try {
-      const user = await User.findOne({ username })
-      if (user) {
-        return user
-      }
-      return undefined
+      console.log("MY LIBRARY QUERY FIRED!")
+      const libraryObjectId = new mongo.ObjectId(libraryId)
+      const library = await Library.findById(libraryObjectId)
+      return library
     } catch (error) {
-      throw new ApolloError(`User document for ${username} could not be fetched.`)
-    } 
+      throw new ApolloError(`Library document for ObjectId ${libraryId} could not be fetched.`)
+    }
   },
+  fetchGameData: async (_root: never, { gameId }: { gameId: string }): Promise<GameDoc | null | ApolloError> =>  {
+    try {
+      const gameObjectId = new mongo.ObjectId(gameId)
+      const game = await Game.findById(gameObjectId)
+      return game
+    } catch (error) {
+      throw new ApolloError(`Game document for ObjectId ${gameId} could not be fetched.`)
+    }
+  },
+  fetchGameObjectId: async (_root: never, { gameRawgId }: { gameRawgId: number }): Promise<string | null | ApolloError> => {
+    try {
+      const game = await Game.findOne({ numberId: gameRawgId })
+      console.log(game)
+      if (game && game.id) {
+        return game.id
+      } else {
+        return null
+      }
+    } catch (error) {
+      throw new ApolloError(`Game with number id ${gameRawgId} could not be fetched.`)
+    }
+  }
 }
 
 export default queries

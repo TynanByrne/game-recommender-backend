@@ -57,6 +57,20 @@ const mutations = {
       passwordHash,
     }
     const user = new User(newUser)
+    const library = new Library({
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      user: user._id,
+      games: {
+        wishlist: [],
+        completed: [],
+        playing: [],
+        unfinished: [],
+        notStarted: [],
+      }
+    })
+    user.library = library
+    await user.save()
+    await library.save()
 
     return user.save()
       .catch((error: Error) => {
@@ -123,17 +137,22 @@ const mutations = {
       await library.save()
     }
 
-    let game = await Game.findOne({ id: args.gameId })
+    let game = await Game.findOne({ numberId: args.gameId })
     if (!game) {
       try {
         const { data } = await Axios.get<SingleGame>(
           `${API_URL}/games/${args.gameId}?key=${API_KEY}`
         )
-        game = new Game(data)
+        const newGame = {...data, numberId: data.id}
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { id, ...rest } = newGame
+        console.log(rest)
+        game = new Game(rest)
         await game.save()
       } catch (error) {
         console.log(error)
-        throw new ApolloError(`Game with id ${args.gameId} could not be fetched.`)
+        throw new ApolloError(`Game with id ${args.gameId} could not be fetched.`, error
+        )
       }
     }
     console.log(game)

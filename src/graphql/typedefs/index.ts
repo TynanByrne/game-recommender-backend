@@ -140,7 +140,7 @@ const typeDefs = gql`
     username: String!
     passwordHash: String!
     id: ID!
-    library: String!
+    library: String
   }
   type Token {
     value: String!
@@ -187,7 +187,7 @@ const typeDefs = gql`
     slug: String
   }
   input GameInput {
-    id: ID!
+    numberId: ID!
     name: String!
     metacritic: Int
     released: String!
@@ -197,7 +197,7 @@ const typeDefs = gql`
     tags: [TagInput]
   }
   type DatabaseGame {
-    id: ID!
+    numberId: ID!
     name: String!
     metacritic: Int
     released: String!
@@ -229,7 +229,9 @@ const typeDefs = gql`
     allUsers: [User]
     me: User
     singleGame(id: Int!): SingleGame
-    myUserDoc(username: String!): User
+    myLibrary(libraryId: String!): Library
+    fetchGameData(gameId: String!): DatabaseGame
+    fetchGameObjectId(gameRawgId: Int!): String
   }
   type Mutation {
     addUser(
