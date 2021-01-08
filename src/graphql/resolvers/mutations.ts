@@ -40,6 +40,10 @@ export interface EditGameArgs {
   newCategory: GameCategory
   gameId: number
 }
+export interface RemoveGameArgs {
+  username: string
+  gameId: number
+}
 
 const validateUser = async (username: string, password: string): Promise<UserDoc> => {
   const user = await User.findOne({ username })
@@ -175,7 +179,7 @@ const mutations = {
       }
       library.markModified('games')
     }
-    library.totalGames = library.totalGames + 1
+    library.totalGames++
     return await library.save()
   },
   editGame: async (_root: never, args: EditGameArgs): Promise<LibraryDoc> => {
@@ -250,6 +254,35 @@ const mutations = {
     console.log("FIRED!")
     return await library.save()
   },
+  removeGame: async (_root: never, args: RemoveGameArgs): Promise<LibraryDoc> => {
+    const user = await User.findOne({ username: args.username })
+
+    if (!user) {
+      throw new UserInputError('User could not be found.')
+    }
+    if(!user.library) {
+      throw new ApolloError('Library could not be found for this user.')
+    }
+    const game = await Game.findOne({ numberId: args.gameId })
+    if (!game) {
+      throw new ApolloError(`Game with numberId ${args.gameId} could not be found.`)
+    }
+    const library = await Library.findById(user.library)
+    if (!library) {
+      throw new ApolloError('Library could not be found')
+    }
+    if (library.games) {
+      const games = library.games
+      games.wishlist = games.wishlist.filter(g => String(g) !== game.id)
+      games.completed = games.completed.filter(g => String(g) !== game.id)
+      games.notStarted = games.notStarted.filter(g => String(g) !== game.id)
+      games.playing = games.playing.filter(g => String(g) !== game.id)
+      games.unfinished = games.unfinished.filter(g => String(g) !== game.id)
+    }
+    library.markModified('games')
+    library.totalGames--
+    return await library.save()
+  }
 }
 
 export default mutations

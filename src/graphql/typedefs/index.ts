@@ -262,6 +262,10 @@ const typeDefs = gql`
       newCategory: String!
       gameId: Int!
     ): Library
+    removeGame(
+      username: String!
+      gameId: Int!
+    ) : Library
   }
 `
 
