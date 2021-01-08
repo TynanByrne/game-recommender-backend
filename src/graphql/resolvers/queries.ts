@@ -24,8 +24,6 @@ const emptyResult = {
 }
 
 const queries = {
-  hello: (): string => 'Hello, world!',
-  goodbye: (): string => 'Goodbye, world!',
   games: async (): Promise<GamesResult> => {
     try {
       const { data: games } = await axios.get<GamesResult>(`${API_URL}/games?key=${API_KEY}`)
@@ -34,7 +32,6 @@ const queries = {
       console.log(error)
       return emptyResult
     }
-
   },
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   searchGames: async (_root: never, { searchTerm }: { searchTerm: string }): Promise<GamesResult> => {
