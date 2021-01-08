@@ -67,7 +67,6 @@ const queries = {
   },
   myLibrary: async (_root: never, { libraryId }: { libraryId: string }): Promise<LibraryDoc | null | ApolloError> => {
     try {
-      console.log("MY LIBRARY QUERY FIRED!")
       const libraryObjectId = new mongo.ObjectId(libraryId)
       const library = await Library.findById(libraryObjectId)
       return library

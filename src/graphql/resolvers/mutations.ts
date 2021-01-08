@@ -34,6 +34,12 @@ export interface AddGameArgs {
   gameCategory: GameCategory
   gameId: number
 }
+export interface EditGameArgs {
+  username: string
+  oldCategory: GameCategory
+  newCategory: GameCategory
+  gameId: number
+}
 
 const validateUser = async (username: string, password: string): Promise<UserDoc> => {
   const user = await User.findOne({ username })
@@ -121,20 +127,7 @@ const mutations = {
       throw new UserInputError('Username could not be found.')
     }
     if (!user.library) {
-      const library = new Library({
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        user: user._id,
-        games: {
-          wishlist: [],
-          completed: [],
-          playing: [],
-          unfinished: [],
-          notStarted: [],
-        }
-      })
-      user.library = library
-      await user.save()
-      await library.save()
+      throw new ApolloError("Library could not be found for this user.")
     }
 
     let game = await Game.findOne({ numberId: args.gameId })
@@ -183,6 +176,78 @@ const mutations = {
       library.markModified('games')
     }
     library.totalGames = library.totalGames + 1
+    return await library.save()
+  },
+  editGame: async (_root: never, args: EditGameArgs): Promise<LibraryDoc> => {
+    const user = await User.findOne({ username: args.username })
+
+    if (!user) {
+      throw new UserInputError('User could not be found.')
+    }
+    if(!user.library) {
+      throw new ApolloError('Library could not be found for this user.')
+    }
+    const game = await Game.findOne({ numberId: args.gameId })
+    if (!game) {
+      throw new ApolloError(`Game with numberId ${args.gameId} could not be found.`)
+    }
+    const library = await Library.findById(user.library)
+    if (!library) {
+      throw new ApolloError('Library could not be found')
+    }
+    if (library.games) {
+      const games = library.games
+      switch (args.newCategory) {
+        case 'wishlist':
+          games.wishlist = games.wishlist.concat(game._id)
+          break
+        case 'completed':
+          games.completed = games.completed.concat(game._id)
+          break
+        case 'not started':
+          games.notStarted = games.notStarted.concat(game._id)
+          break
+        case 'playing':
+          games.playing = games.playing.concat(game._id)
+          break
+        case 'unfinished':
+          games.unfinished = games.unfinished.concat(game._id)
+          break
+        default:
+          throw new ApolloError('Invalid game category.')
+      }
+      switch (args.oldCategory) {
+        case 'wishlist':
+          games.wishlist = games.wishlist.filter(g =>
+            String(g) !== game.id
+          )
+          break
+        case 'completed':
+          games.completed = games.completed.filter(g =>
+            String(g) !== game.id
+          )
+          break
+        case 'not started':
+          games.notStarted = games.notStarted.filter(g =>
+            String(g) !== game.id  
+          )
+          break
+        case 'playing':
+          games.playing = games.playing.filter(g =>
+            String(g) !== game.id 
+          )
+          break
+        case 'unfinished':
+          games.unfinished = games.unfinished.filter(g => 
+            String(g) !== game.id
+          )
+          break
+        default:
+          throw new ApolloError('Invalid game category.')
+      }
+      library.markModified('games')
+    }
+    console.log("FIRED!")
     return await library.save()
   },
 }

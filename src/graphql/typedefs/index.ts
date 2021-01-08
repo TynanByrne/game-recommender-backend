@@ -256,6 +256,12 @@ const typeDefs = gql`
       gameCategory: String!
       gameId: Int!
     ): Library
+    editGame(
+      username: String!
+      oldCategory: String!
+      newCategory: String!
+      gameId: Int!
+    ): Library
   }
 `
 
