@@ -65,7 +65,7 @@ const typeDefs = gql`
     slug: String
   }
   type ParentPlatform {
-    platform: [ParentPlatformDetails]
+    platform: ParentPlatformDetails
   }
   type Requirements {
     minimum: String
