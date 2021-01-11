@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 import { GamesResult, SingleGame } from "../../types"
 import axios from 'axios'
 import config from '../../config'
@@ -71,7 +73,7 @@ const queries = {
       throw new ApolloError(`Library document for ObjectId ${libraryId} could not be fetched.`)
     }
   },
-  fetchGameData: async (_root: never, { gameId }: { gameId: string }): Promise<GameDoc | null | ApolloError> =>  {
+  fetchGameData: async (_root: never, { gameId }: { gameId: string }): Promise<GameDoc | null | ApolloError> => {
     try {
       const gameObjectId = new mongo.ObjectId(gameId)
       const game = await Game.findById(gameObjectId)
@@ -92,7 +94,7 @@ const queries = {
     } catch (error) {
       throw new ApolloError(`Game with number id ${gameRawgId} could not be fetched.`)
     }
-  }
+  },
 }
 
 export default queries
