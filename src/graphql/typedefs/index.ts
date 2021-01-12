@@ -220,6 +220,39 @@ const typeDefs = gql`
     games: LibraryGames
     totalGames: Int!
   }
+  input PostInput {
+    username: String
+    text: String
+    games: [Int]
+    platforms: [String]
+  }
+  input RecommendationInput {
+    recommender: String!
+    games: [Int]
+    text: String
+    comments: [CommentInput]
+  }
+  input CommentInput {
+    commenter: String
+    text: String
+  }
+  type Post {
+    poster: String!
+    text: String!
+    games: [String]
+    platforms: [String]
+    recommendations: [Recommendation]
+  }
+  type Recommendation {
+    recommender: String!
+    games: [Int]
+    text: String
+    comments: [Comment]
+  }
+  type Comment {
+    commenter: String
+    text: String
+  }
   type Query {
     hello: String!
     goodbye: String!
@@ -266,6 +299,12 @@ const typeDefs = gql`
       username: String!
       gameId: Int!
     ) : Library
+    newPost(
+      username: String!
+      text: String!
+      games: [String]
+      platforms: [String]
+    ): Post
   }
 `
 

@@ -7,6 +7,7 @@ import Library, { LibraryDoc } from "../../models/library"
 import Game from "../../models/game"
 import Axios from "axios"
 import { SingleGame } from "../../types"
+import Post, { PostDoc } from "../../models/post"
 
 
 const JWT_SECRET = config.JWT_SECRET
@@ -44,6 +45,22 @@ export interface RemoveGameArgs {
   username: string
   gameId: number
 }
+export interface NewPostArgs {
+  username: string,
+  text: string,
+  games: string
+  platforms: string[]
+}
+/* interface Recommendation {
+  recommender: string
+  games: number[]
+  text: string
+  commments: Comment[]
+}
+interface Comment {
+  commenter: string
+  text: string
+} */
 
 const validateUser = async (username: string, password: string): Promise<UserDoc> => {
   const user = await User.findOne({ username })
@@ -90,15 +107,7 @@ const mutations = {
       })
   },
   login: async (_root: never, args: UserArgs): Promise<{ value: string }> => {
-    const user = await User.findOne({ username: args.username })
-
-    const passwordCorrect = user === null
-      ? false
-      : await bcrypt.compare(args.password, user.passwordHash)
-
-    if (!(user && passwordCorrect)) {
-      throw new UserInputError('Wrong credentials.')
-    }
+    const user = await validateUser(args.username, args.password)
 
     const userForToken = {
       username: user.username,
@@ -140,10 +149,9 @@ const mutations = {
         const { data } = await Axios.get<SingleGame>(
           `${API_URL}/games/${args.gameId}?key=${API_KEY}`
         )
-        const newGame = {...data, numberId: data.id}
+        const newGame = { ...data, numberId: data.id }
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { id, ...rest } = newGame
-        console.log(rest)
         game = new Game(rest)
         await game.save()
       } catch (error) {
@@ -188,7 +196,7 @@ const mutations = {
     if (!user) {
       throw new UserInputError('User could not be found.')
     }
-    if(!user.library) {
+    if (!user.library) {
       throw new ApolloError('Library could not be found for this user.')
     }
     const game = await Game.findOne({ numberId: args.gameId })
@@ -233,16 +241,16 @@ const mutations = {
           break
         case 'not started':
           games.notStarted = games.notStarted.filter(g =>
-            String(g) !== game.id  
+            String(g) !== game.id
           )
           break
         case 'playing':
           games.playing = games.playing.filter(g =>
-            String(g) !== game.id 
+            String(g) !== game.id
           )
           break
         case 'unfinished':
-          games.unfinished = games.unfinished.filter(g => 
+          games.unfinished = games.unfinished.filter(g =>
             String(g) !== game.id
           )
           break
@@ -260,7 +268,7 @@ const mutations = {
     if (!user) {
       throw new UserInputError('User could not be found.')
     }
-    if(!user.library) {
+    if (!user.library) {
       throw new ApolloError('Library could not be found for this user.')
     }
     const game = await Game.findOne({ numberId: args.gameId })
@@ -282,6 +290,23 @@ const mutations = {
     library.markModified('games')
     library.totalGames--
     return await library.save()
+  },
+  newPost: async (_root: never, args: NewPostArgs): Promise<PostDoc> => {
+    const user = await User.findOne({ username: args.username })
+    if (!user) {
+      throw new UserInputError('User could not be found.')
+    }
+    const newPost = {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      poster: user._id,
+      text: args.text,
+      games: args.games,
+      platforms: args.platforms,
+    }
+    console.log(newPost)
+
+    const post = new Post(newPost)
+    return post.save()
   }
 }
 
