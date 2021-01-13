@@ -8,6 +8,7 @@ import { userSchema } from "./user";
 
 export const postSchema = createSchema({
   poster: Type.ref(Type.objectId()).to('User', userSchema),
+  title: Type.string({ required: true, maxlength: 50 }),
   text: Type.string({
     required: true,
     maxlength: 200,

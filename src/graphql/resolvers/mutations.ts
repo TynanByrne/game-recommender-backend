@@ -46,8 +46,9 @@ export interface RemoveGameArgs {
   gameId: number
 }
 export interface NewPostArgs {
-  username: string,
-  text: string,
+  username: string
+  title: string
+  text: string
   games: string
   platforms: string[]
 }
@@ -299,6 +300,7 @@ const mutations = {
     const newPost = {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       poster: user._id,
+      title: args.title,
       text: args.text,
       games: args.games,
       platforms: args.platforms,

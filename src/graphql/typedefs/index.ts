@@ -301,6 +301,7 @@ const typeDefs = gql`
     ) : Library
     newPost(
       username: String!
+      title: String!
       text: String!
       games: [String]
       platforms: [String]
