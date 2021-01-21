@@ -223,12 +223,12 @@ const typeDefs = gql`
   input PostInput {
     username: String
     text: String
-    games: [Int]
+    game: Int
     platforms: [String]
   }
   input RecommendationInput {
     recommender: String!
-    games: [Int]
+    game: String
     text: String
     comments: [CommentInput]
   }
@@ -239,13 +239,13 @@ const typeDefs = gql`
   type Post {
     poster: String!
     text: String!
-    games: [String]
+    game: String
     platforms: [String]
     recommendations: [Recommendation]
   }
   type Recommendation {
     recommender: String!
-    games: [Int]
+    game: String
     text: String
     comments: [Comment]
   }
