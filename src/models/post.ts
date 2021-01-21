@@ -13,17 +13,13 @@ export const postSchema = createSchema({
     required: true,
     maxlength: 200,
   }),
-  games: Type.array({ maxlength: 3 }).of(
-    Type.ref(Type.objectId()).to('Game', GameSchema)
-  ),
+  game: Type.ref(Type.objectId()).to('Game', GameSchema),
   platforms: Type.array().of(
     Type.string(),
   ),
   recommendations: Type.array().of({
     recommender: Type.ref(Type.objectId()).to('User', userSchema),
-    games: Type.array({ maxlength: 3, required: true, }).of(
-      Type.ref(Type.objectId()).to('Game', GameSchema)
-    ),
+    game: Type.ref(Type.objectId()).to('Game', GameSchema),
     text: Type.string({
       required: true,
       maxlength: 200,

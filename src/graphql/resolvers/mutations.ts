@@ -49,7 +49,7 @@ export interface NewPostArgs {
   username: string
   title: string
   text: string
-  games: string
+  games: string[]
   platforms: string[]
 }
 /* interface Recommendation {
@@ -297,6 +297,7 @@ const mutations = {
     if (!user) {
       throw new UserInputError('User could not be found.')
     }
+    
     const newPost = {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       poster: user._id,
