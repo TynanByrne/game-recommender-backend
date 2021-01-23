@@ -4,7 +4,7 @@ import * as jwt from 'jsonwebtoken'
 import { ApolloError, UserInputError } from "apollo-server"
 import config from '../../config'
 import Library, { LibraryDoc } from "../../models/library"
-import Game from "../../models/game"
+import Game, { GameDoc } from "../../models/game"
 import Axios from "axios"
 import { SingleGame } from "../../types"
 import Post, { PostDoc } from "../../models/post"
@@ -49,7 +49,7 @@ export interface NewPostArgs {
   username: string
   title: string
   text: string
-  games: string[]
+  game: string
   platforms: string[]
 }
 /* interface Recommendation {
@@ -74,6 +74,27 @@ const validateUser = async (username: string, password: string): Promise<UserDoc
     throw new UserInputError('Wrong credentials.')
   }
   return user
+}
+
+const validateGame = async (gameId: number): Promise<GameDoc> => {
+  let game = await Game.findOne({ numberId: gameId })
+  if (!game) {
+    try {
+      const { data } = await Axios.get<SingleGame>(
+        `${API_URL}/games/${gameId}?key=${API_KEY}`
+      )
+      const newGame = { ...data, numberId: data.id }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { id, ...rest } = newGame
+      game = new Game(rest)
+      await game.save()
+    } catch (error) {
+      console.log(error)
+      throw new ApolloError(`Game with id ${gameId} could not be fetched.`, error
+      )
+    }
+  }
+  return game
 }
 
 const mutations = {
@@ -297,13 +318,16 @@ const mutations = {
     if (!user) {
       throw new UserInputError('User could not be found.')
     }
-    
+
+    const game = await validateGame(Number(args.game))
+
     const newPost = {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       poster: user._id,
       title: args.title,
       text: args.text,
-      games: args.games,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      game: game._id,
       platforms: args.platforms,
     }
     console.log(newPost)
