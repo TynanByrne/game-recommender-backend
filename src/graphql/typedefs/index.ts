@@ -238,10 +238,12 @@ const typeDefs = gql`
   }
   type Post {
     poster: String!
+    title: String!
     text: String!
     game: String
     platforms: [String]
     recommendations: [Recommendation]
+    timestamp: String
   }
   type Recommendation {
     recommender: String!
@@ -265,6 +267,8 @@ const typeDefs = gql`
     myLibrary(libraryId: String!): Library
     fetchGameData(gameId: String!): DatabaseGame
     fetchGameObjectId(gameRawgId: Int!): String
+    allPosts: [Post]
+    getUser(userId: String!): User
   }
   type Mutation {
     addUser(
@@ -303,7 +307,7 @@ const typeDefs = gql`
       username: String!
       title: String!
       text: String!
-      games: [String]
+      game: Int
       platforms: [String]
     ): Post
   }

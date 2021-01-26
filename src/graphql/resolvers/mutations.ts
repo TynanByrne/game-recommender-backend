@@ -49,7 +49,7 @@ export interface NewPostArgs {
   username: string
   title: string
   text: string
-  game: string
+  game: number
   platforms: string[]
 }
 /* interface Recommendation {
@@ -83,6 +83,7 @@ const validateGame = async (gameId: number): Promise<GameDoc> => {
       const { data } = await Axios.get<SingleGame>(
         `${API_URL}/games/${gameId}?key=${API_KEY}`
       )
+      console.log(data)
       const newGame = { ...data, numberId: data.id }
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { id, ...rest } = newGame
@@ -171,7 +172,7 @@ const mutations = {
         const { data } = await Axios.get<SingleGame>(
           `${API_URL}/games/${args.gameId}?key=${API_KEY}`
         )
-        const newGame = { ...data, numberId: data.id }
+        const newGame = { ...data, numberId: Number(data.id) }
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { id, ...rest } = newGame
         game = new Game(rest)
@@ -318,8 +319,7 @@ const mutations = {
     if (!user) {
       throw new UserInputError('User could not be found.')
     }
-
-    const game = await validateGame(Number(args.game))
+    const game = await validateGame(args.game)
 
     const newPost = {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment

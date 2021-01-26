@@ -9,6 +9,7 @@ import { ApolloError } from "apollo-server"
 import 'ts-mongoose/plugin'
 import { mongo } from "mongoose"
 import Game, { GameDoc } from "../../models/game"
+import Post, { PostDoc } from "../../models/post"
 
 const API_URL = 'https://api.rawg.io/api'
 const API_KEY = config.API_KEY
@@ -95,6 +96,20 @@ const queries = {
       throw new ApolloError(`Game with number id ${gameRawgId} could not be fetched.`)
     }
   },
+  allPosts: async (): Promise<PostDoc[]> => {
+    return await Post.find({})
+  },
+  getUser: async (_root: never, { userId }: { userId: string }): Promise<UserDoc | ApolloError> => {
+    try {
+      const userObjectId = new mongo.ObjectId(userId)
+      const user = await User.findById(userObjectId)
+      if (!user) return new ApolloError('Fetched null')
+      return user
+    } catch (error) {
+      throw new ApolloError(`User document for userId ${userId} could not be fetched`, error)
+    }
+    
+  }
 }
 
 export default queries
