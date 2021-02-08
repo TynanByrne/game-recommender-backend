@@ -29,10 +29,10 @@ export const postSchema = createSchema({
       commenter: Type.ref(Type.objectId()).to('User', userSchema),
       text: Type.string({ maxlength: 140 }),
       likes: Type.number({ default: 0 }),
-      timestamp: Type.date({ default: Date.now as any })
+      timestamp: Type.date({ default: new Date() })
     }),
   }),
-  timestamp: Type.date({ default: Date.now as any }),
+  timestamp: Type.date({ default: new Date() }),
 })
 
 export type PostDoc = ExtractDoc<typeof postSchema>

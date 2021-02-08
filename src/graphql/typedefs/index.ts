@@ -1,6 +1,7 @@
 import { gql } from 'apollo-server'
 
 const typeDefs = gql`
+  scalar DateTime
   type ShortScreenshot {
     id: ID!
     image: String!
@@ -243,7 +244,7 @@ const typeDefs = gql`
     game: String
     platforms: [String]
     recommendations: [Recommendation]
-    timestamp: String
+    timestamp: DateTime
   }
   type Recommendation {
     recommender: String!

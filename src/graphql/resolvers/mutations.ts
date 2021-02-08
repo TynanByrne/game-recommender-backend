@@ -52,16 +52,6 @@ export interface NewPostArgs {
   game: number
   platforms: string[]
 }
-/* interface Recommendation {
-  recommender: string
-  games: number[]
-  text: string
-  commments: Comment[]
-}
-interface Comment {
-  commenter: string
-  text: string
-} */
 
 const validateUser = async (username: string, password: string): Promise<UserDoc> => {
   const user = await User.findOne({ username })
@@ -134,6 +124,7 @@ const mutations = {
 
     const userForToken = {
       username: user.username,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       id: user.id,
     }
     return { value: jwt.sign(userForToken, JWT_SECRET) }
@@ -226,7 +217,7 @@ const mutations = {
     if (!game) {
       throw new ApolloError(`Game with numberId ${args.gameId} could not be found.`)
     }
-    const library = await Library.findById(user.library)
+    const library: LibraryDoc = await Library.findById(user.library)
     if (!library) {
       throw new ApolloError('Library could not be found')
     }
@@ -298,7 +289,7 @@ const mutations = {
     if (!game) {
       throw new ApolloError(`Game with numberId ${args.gameId} could not be found.`)
     }
-    const library = await Library.findById(user.library)
+    const library: LibraryDoc = await Library.findById(user.library)
     if (!library) {
       throw new ApolloError('Library could not be found')
     }
