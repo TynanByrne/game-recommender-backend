@@ -109,7 +109,16 @@ const queries = {
       throw new ApolloError(`User document for userId ${userId} could not be fetched`, error)
     }
     
-  }
+  },
+  getPost: async (_root: never, { postId }: { postId: string }): Promise<PostDoc | ApolloError | null> => {
+    try {
+      const postObjectId = new mongo.ObjectId(postId)
+      const post = await Post.findById(postObjectId)
+      return post
+    } catch (error) {
+      throw new ApolloError(`Post document for ObjectId ${postId} could not be fetched.`, error)
+    }
+  } 
 }
 
 export default queries

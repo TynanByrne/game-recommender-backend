@@ -217,7 +217,7 @@ const mutations = {
     if (!game) {
       throw new ApolloError(`Game with numberId ${args.gameId} could not be found.`)
     }
-    const library: LibraryDoc = await Library.findById(user.library)
+    const library = await Library.findById(user.library)
     if (!library) {
       throw new ApolloError('Library could not be found')
     }
@@ -289,7 +289,7 @@ const mutations = {
     if (!game) {
       throw new ApolloError(`Game with numberId ${args.gameId} could not be found.`)
     }
-    const library: LibraryDoc = await Library.findById(user.library)
+    const library = await Library.findById(user.library)
     if (!library) {
       throw new ApolloError('Library could not be found')
     }

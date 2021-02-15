@@ -270,6 +270,7 @@ const typeDefs = gql`
     fetchGameObjectId(gameRawgId: Int!): String
     allPosts: [Post]
     getUser(userId: String!): User
+    getPost(postId: String!): Post
   }
   type Mutation {
     addUser(
