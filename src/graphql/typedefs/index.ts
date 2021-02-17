@@ -238,6 +238,7 @@ const typeDefs = gql`
     text: String
   }
   type Post {
+    _id: String!
     poster: String!
     title: String!
     text: String!
