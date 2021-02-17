@@ -24,6 +24,7 @@ export const postSchema = createSchema({
       required: true,
       maxlength: 200,
     }),
+    timestamp: Type.date(),
     likes: Type.number({ default: 0 }),
     comments: Type.array().of({
       commenter: Type.ref(Type.objectId()).to('User', userSchema),

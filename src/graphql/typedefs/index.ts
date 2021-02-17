@@ -252,6 +252,7 @@ const typeDefs = gql`
     game: String
     text: String
     comments: [Comment]
+    timestamp: DateTime
   }
   type Comment {
     commenter: String
