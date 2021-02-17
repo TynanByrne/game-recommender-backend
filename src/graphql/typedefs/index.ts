@@ -313,6 +313,12 @@ const typeDefs = gql`
       game: Int
       platforms: [String]
     ): Post
+    newRecommendation(
+      username: String!
+      text: String!
+      game: Int!
+      postId: String!
+    ): Post
   }
 `
 

@@ -52,6 +52,12 @@ export interface NewPostArgs {
   game: number
   platforms: string[]
 }
+export interface NewRecommendationArgs {
+  username: string
+  game: number
+  text: string
+  postId: string
+}
 
 const validateUser = async (username: string, password: string): Promise<UserDoc> => {
   const user = await User.findOne({ username })
@@ -324,6 +330,27 @@ const mutations = {
     console.log(newPost)
 
     const post = new Post(newPost)
+    return post.save()
+  },
+  newRecommendation: async (_root: never, args: NewRecommendationArgs): Promise<PostDoc> => {
+    const user = await User.findOne({ username: args.username })
+    if (!user) {
+      throw new UserInputError('User could not be found.')
+    }
+    const game = await validateGame(args.game)
+    const post = await Post.findById(args.postId)
+    if (!post) {
+      throw new UserInputError('Post could not be found.')
+    }
+    const newRecommendation = {
+      recommender: user._id,
+      game: game._id,
+      text: args.text,
+      comments: [],
+      likes: 0,
+      timestamp: new Date(),
+    }
+    post.recommendations = post.recommendations?.concat(newRecommendation)
     return post.save()
   }
 }

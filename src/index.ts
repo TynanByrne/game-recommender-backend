@@ -9,7 +9,7 @@ import { IncomingMessage } from 'http'
 
 const MONGODB_URI = process.env.MONGODB_URI ? process.env.MONGODB_URI : ''
 const JWT_SECRET = config.JWT_SECRET
-if (JWT_SECRET === undefined) throw new Error('Could not find JWT_SECRET...')
+if (!JWT_SECRET) throw new Error('Could not find JWT_SECRET...')
 
 export interface Error {
   message: string
